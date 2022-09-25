@@ -2,7 +2,9 @@ use std::{env, fs, process::exit};
 use colored::Colorize;
 
 mod types;
+mod client;
 use types::*;
+use client::Client;
 
 
 fn main() {
@@ -29,5 +31,5 @@ fn main() {
         exit(1);
     }
     let master_struct = master_struct.unwrap();
-    println!("{:?}", master_struct);
+    let master_client = Client::new(master_struct.config);
 }

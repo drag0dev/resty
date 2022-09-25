@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize};
+use serde_derive::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct MasterStruct{
@@ -15,14 +15,17 @@ pub struct Config{
     pub port: i32,
     /// timeout between each test in ms
     /// 0 if no timeout
-    pub timeout: u128,
+    pub timeout: Option<u128>,
+    /// keep the session/cookie if the
+    /// respone has it
+    /// TODO: jwt/session/cookie?
+    pub keep_session: bool,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Test{
-    // request
+pub struct Test{ // request
     pub end_point: String,
-    pub method: HttpMethod,
+    pub method: String,
     pub headers: Vec<Header>,
     pub params: Vec<UrlParams>,
     pub payload: Option<String>,
