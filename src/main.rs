@@ -6,12 +6,12 @@ mod client;
 use types::*;
 use client::Client;
 
-
-fn main() {
+#[tokio::main]
+async fn main() {
     // load file name
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        println!("{}: missing file name",  "error".red());
+        println!("{}: missing file name",  "error".red().bold());
         exit(1);
     }
     let test_config: &String = &args[1];
@@ -19,7 +19,7 @@ fn main() {
     // check if the file/path exists
     let file_contents = fs::read_to_string(test_config);
     if file_contents.is_err(){
-        println!("{}: opening file: {}",  "error".red(), file_contents.err().unwrap());
+        println!("{}: opening file: {}",  "error".red().bold(), file_contents.err().unwrap());
         exit(1);
     }
     let file_contents = file_contents.unwrap();
@@ -27,9 +27,31 @@ fn main() {
     // parsing config file into json
     let master_struct: Result<MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
     if master_struct.is_err(){
-        println!("{}: parsing config file: {}",  "error".red(), master_struct.err().unwrap());
+        println!("{}: parsing config file: {}",  "error".red().bold(), master_struct.err().unwrap());
         exit(1);
     }
     let master_struct = master_struct.unwrap();
-    let master_client = Client::new(master_struct.config);
+    let master_client = Client::new(&master_struct.config);
+    if master_client.is_err(){
+        println!("{} setting up client: {}", "error".red().bold(), master_client.err().unwrap());
+        std::process::exit(1);
+    }
+
+    let mut success = 0;
+    let mut failed = 0;
+    let timeout = if master_struct.config.timeout.is_some(){
+        master_struct.config.timeout.unwrap()
+    }else{
+        0
+    };
+
+    let master_client = master_client.unwrap();
+    for (i, t) in master_struct.tests.iter().enumerate(){
+        let result = master_client.exec_test(t).await;
+        if timeout > 0{
+            std::thread::sleep_ms(timeout);
+        }
+
+        // check if the response is valid
+    }
 }

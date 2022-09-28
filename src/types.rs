@@ -6,7 +6,7 @@ pub struct MasterStruct{
     pub tests: Vec<Test>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Config{
     /// url to which requests are sent
     pub base_url: String,
@@ -15,7 +15,7 @@ pub struct Config{
     pub port: i32,
     /// timeout between each test in ms
     /// 0 if no timeout
-    pub timeout: Option<u128>,
+    pub timeout: Option<u32>,
     /// keep the session/cookie if the
     /// respone has it
     /// TODO: jwt/session/cookie?
@@ -23,7 +23,8 @@ pub struct Config{
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Test{ // request
+pub struct Test{
+    // request
     pub end_point: String,
     pub method: String,
     pub headers: Vec<Header>,
