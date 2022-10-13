@@ -33,7 +33,7 @@ impl Client{
         let mut url = self.base_url.clone();
         url.set_path(&test.end_point);
 
-        let mut request = self.reqwest_client.request(method, self.base_url.as_str());
+        let mut request = self.reqwest_client.request(method, url.as_str());
         for h in test.headers.iter(){
             request = request.header(&h.header, &h.value);
         }

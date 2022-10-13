@@ -34,7 +34,7 @@ pub struct Test{
     // response
     pub response_code: u16,
     pub response_body: Option<String>,
-    pub response_headers: Option<Vec<String>>,
+    pub response_headers: Option<Vec<Header>>,
 }
 
 #[derive(Deserialize, Debug)]

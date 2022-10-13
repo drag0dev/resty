@@ -1,10 +1,16 @@
 use std::{env, fs, process::exit};
 use colored::Colorize;
+use reqwest::header::HeaderMap;
 
 mod types;
 mod client;
 use types::*;
 use client::Client;
+
+fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
+    // TODO:
+    false
+}
 
 #[tokio::main]
 async fn main() {
@@ -48,10 +54,68 @@ async fn main() {
     let master_client = master_client.unwrap();
     for (i, t) in master_struct.tests.iter().enumerate(){
         let result = master_client.exec_test(t).await;
+        if result.is_err(){
+            println!("{}: executing a test {}", "error".red().bold(), i+1);
+            failed += 1;
+        }else{
+            let result = result.unwrap();
+            let mut failed_check: bool = false;
+
+            // check status code
+            if t.response_code != result.status().as_u16(){
+                println!("{} ({}): response code not matching {} != {}",
+                "fail".red().bold(), i+1, t.response_code, result.status().as_u16());
+                failed_check = true;
+            }
+
+            // check headers if required
+            if let Some(test_headers) = &t.response_headers{
+                let mut first: bool = false;
+                let mut not_matching = 1;
+                let res_headers = result.headers();
+                for (i, h) in test_headers.iter().enumerate(){
+                    // todo
+                    if !header_match(h,  res_headers){
+                        if !first{
+                            println!("{} ({}): headers not matching:", "fail".red().bold(), i+1);
+                            failed_check = true;
+                            first = true;
+                        }
+                        println!("\t({}) {} not matching ", not_matching+1, h.header);
+                        not_matching += 1;
+                    }
+                }
+            }
+
+            // check body if required
+            if let Some(body) = &t.response_body{
+                let res_body = result.bytes().await;
+                if res_body.is_err(){
+                    println!("{} ({}): error getting response body", "fail".red().bold(), i+1);
+                    failed_check = true;
+                }else{
+                    let res_body = res_body.unwrap();
+                    if body.as_bytes() != res_body{
+                        // TODO: show a slice of mismatch
+                        println!("{} ({}): body not matching ", "fail".red().bold(), i+1);
+                        failed_check = true;
+                    }
+                }
+            }
+
+
+            if failed_check{
+                failed += 1;
+            }else{
+                success += 1;
+                println!("{} ({})", "success".green().bold(), i+1);
+            }
+        }
+
         if timeout > 0{
             std::thread::sleep_ms(timeout);
         }
-
-        // check if the response is valid
     }
+
+    println!("\nResults -> {}: {} {}: {}", "success".green().bold(), success, "failed".red().bold(), failed);
 }
