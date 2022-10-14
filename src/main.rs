@@ -1,16 +1,12 @@
 use std::{env, fs, process::exit};
 use colored::Colorize;
-use reqwest::header::HeaderMap;
 
 mod types;
 mod client;
+mod helpers;
 use types::*;
 use client::Client;
-
-fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
-    // TODO:
-    false
-}
+use helpers::*;
 
 #[tokio::main]
 async fn main() {
