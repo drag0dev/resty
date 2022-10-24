@@ -70,14 +70,19 @@ async fn main() {
                 let mut not_matching = 1;
                 let res_headers = result.headers();
                 for (i, h) in test_headers.iter().enumerate(){
-                    // todo
                     if !header_match(h,  res_headers){
                         if !first{
                             println!("{} ({}): headers not matching:", "fail".red().bold(), i+1);
                             failed_check = true;
                             first = true;
                         }
-                        println!("\t({}) {} not matching ", not_matching+1, h.header);
+                        println!("\t({}) {} not matching ", not_matching, h.header);
+                        if let Some(value) = res_headers.get(&h.header){
+                            println!("\t\tTest header value: {}", h.value);
+                            println!("\t\tResult header value: {}", value.to_str().unwrap());
+                        }else{
+                            println!("\t\t  missing header");
+                        }
                         not_matching += 1;
                     }
                 }
@@ -104,7 +109,7 @@ async fn main() {
                 failed += 1;
             }else{
                 success += 1;
-                println!("{} ({})", "success".green().bold(), i+1);
+                println!("{} ({}) - /{}", "success".green().bold(), i+1, t.end_point);
             }
         }
 
