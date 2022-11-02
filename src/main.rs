@@ -96,7 +96,8 @@ async fn main() {
                     failed_check = true;
                 }else{
                     let res_body = res_body.unwrap();
-                    if body.as_bytes() != res_body{
+                    let res_body_str = res_body.iter().map(|b| *b as char).collect::<String>();
+                    if *body != res_body_str{
                         // TODO: show a slice of mismatch
                         println!("{} ({}): body not matching ", "fail".red().bold(), i+1);
                         failed_check = true;
