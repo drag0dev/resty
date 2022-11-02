@@ -11,3 +11,27 @@ pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     }
     false
 }
+
+/// find where the difference between s1 and s2 starts
+pub fn misamatch_slice<'a>(s1: &String, s2: &'a String) -> usize{
+    let mut start = 0;
+
+    let mut s1_iter = s1.chars();
+    let mut s2_iter = s2.chars();
+    let mut s1c: Option<char>;
+    let mut s2c: Option<char>;
+    loop{
+        s1c = s1_iter.next();
+        s2c = s2_iter.next();
+        if s1c.is_some() && s2c.is_some(){
+            if s1c.unwrap() != s2c.unwrap(){
+                break;
+            }
+        }else{
+            break;
+        }
+
+        start += 1;
+    }
+    start
+}

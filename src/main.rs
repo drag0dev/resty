@@ -72,7 +72,7 @@ async fn main() {
                 for (i, h) in test_headers.iter().enumerate(){
                     if !header_match(h,  res_headers){
                         if !first{
-                            println!("{} ({}): headers not matching:", "fail".red().bold(), i+1);
+                            println!("{} ({}) - headers not matching:", "fail".red().bold(), i+1);
                             failed_check = true;
                             first = true;
                         }
@@ -92,14 +92,20 @@ async fn main() {
             if let Some(body) = &t.response_body{
                 let res_body = result.bytes().await;
                 if res_body.is_err(){
-                    println!("{} ({}): error getting response body", "fail".red().bold(), i+1);
+                    println!("{} ({}) - error getting response body", "fail".red().bold(), i+1);
                     failed_check = true;
                 }else{
                     let res_body = res_body.unwrap();
                     let res_body_str = res_body.iter().map(|b| *b as char).collect::<String>();
                     if *body != res_body_str{
-                        // TODO: show a slice of mismatch
-                        println!("{} ({}): body not matching ", "fail".red().bold(), i+1);
+                        let start = misamatch_slice(body, &res_body_str);
+                        println!("{} ({}) - body not matching starting: {}", "fail".red().bold(), i+1, start);
+                        if body.len() > 0{
+                            println!("\t{}{}",
+                                &body[0..start],
+                                &body[start..].red()
+                            );
+                        }
                         failed_check = true;
                     }
                 }
