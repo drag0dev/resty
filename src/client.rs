@@ -2,6 +2,7 @@ use crate::{types::Config, types::Test};
 use reqwest::{Response, Client as rClient, Method};
 use url::Url;
 use anyhow::{Result, Context, anyhow};
+use std::time::Duration;
 
 pub struct Client{
     // TODO: keep the session if its configured that way
@@ -12,8 +13,11 @@ pub struct Client{
 
 impl Client{
     pub fn new(config: &Config) -> Result<Self>{
-        // TODO: check the default options
-        let client = reqwest::Client::new();
+        let client = reqwest::Client::builder()
+            .connect_timeout(Duration::from_secs(5))
+            .cookie_store(true);
+
+        let client = client.build()?;
         let mut base_url = Url::parse(&config.base_url).context("Parsing base URL")?;
         if base_url.set_port(config.port).is_err(){
             return Err(anyhow!("Error parsing port")).context("Setting up base url");
