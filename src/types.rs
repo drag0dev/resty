@@ -11,8 +11,7 @@ pub struct Config{
     /// url to which requests are sent
     pub base_url: String,
     /// port to which request are sent
-    /// -1 if no port is required
-    pub port: i32,
+    pub port: Option<u16>,
     /// timeout between each test in ms
     /// 0 if no timeout
     pub timeout: Option<u32>,

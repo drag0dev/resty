@@ -15,10 +15,8 @@ impl Client{
         // TODO: check the default options
         let client = reqwest::Client::new();
         let mut base_url = Url::parse(&config.base_url).context("Parsing base URL")?;
-        if config.port > 0 {
-            if base_url.set_port(Some(config.port as u16)).is_err(){
-                return Err(anyhow!("Error parsing port")).context("Setting up base url");
-            }
+        if base_url.set_port(config.port).is_err(){
+            return Err(anyhow!("Error parsing port")).context("Setting up base url");
         }
         Ok(
             Client{
