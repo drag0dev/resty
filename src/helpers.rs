@@ -1,5 +1,6 @@
 use crate::types::Header;
-use reqwest::header::{HeaderMap,HeaderValue};
+use reqwest::header::HeaderMap;
+use colored::Colorize;
 
 pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     if let Some(res_header) = result_headers.get(&header.header){
@@ -8,6 +9,21 @@ pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
             return false;
         }
         return res_header_value.unwrap() == header.value;
+    }
+    false
+}
+
+pub fn body_match(body_one: &String, body_two: &String, index: usize) -> bool{
+    if body_one != body_two{
+        let start = misamatch_slice(body_one, body_two);
+        println!("{} ({}) - body not matching starting: {}", "fail".red().bold(), index+1, start);
+        if body_one.len() > 0{
+            println!("\t{}{}",
+                &body_one[0..start],
+                &body_one[start..].red()
+            );
+        }
+        return true;
     }
     false
 }

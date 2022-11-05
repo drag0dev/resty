@@ -1,5 +1,6 @@
 use std::{env, fs, process::exit};
 use colored::Colorize;
+use std::time::Duration;
 
 mod types;
 mod client;
@@ -97,20 +98,11 @@ async fn main() {
                 }else{
                     let res_body = res_body.unwrap();
                     let res_body_str = res_body.iter().map(|b| *b as char).collect::<String>();
-                    if *body != res_body_str{
-                        let start = misamatch_slice(body, &res_body_str);
-                        println!("{} ({}) - body not matching starting: {}", "fail".red().bold(), i+1, start);
-                        if body.len() > 0{
-                            println!("\t{}{}",
-                                &body[0..start],
-                                &body[start..].red()
-                            );
-                        }
+                    if body_match(body, &res_body_str, i){
                         failed_check = true;
                     }
                 }
             }
-
 
             if failed_check{
                 failed += 1;
@@ -121,9 +113,13 @@ async fn main() {
         }
 
         if timeout > 0{
-            std::thread::sleep_ms(timeout);
+            std::thread::sleep(Duration::from_millis(timeout as u64));
         }
     }
 
-    println!("\nResults -> {}: {} {}: {}", "success".green().bold(), success, "failed".red().bold(), failed);
+    println!("\nResults -> {}: {} {}: {}",
+        "success".green().bold(),
+        success,
+        "failed".red().bold(),
+        failed);
 }
