@@ -1,4 +1,5 @@
 use serde_derive::Deserialize;
+use reqwest::Method;
 
 #[derive(Deserialize, Debug)]
 pub struct MasterStruct{
@@ -13,10 +14,8 @@ pub struct Config{
     /// port to which request are sent
     pub port: Option<u16>,
     /// timeout between each test in ms
-    /// 0 if no timeout
     pub timeout: Option<u32>,
-    /// keep the session/cookie if the
-    /// respone has it
+    /// keep the session/cookie if the respone has it
     /// TODO: jwt/session/cookie?
     pub keep_session: bool,
 }
@@ -25,7 +24,7 @@ pub struct Config{
 pub struct Test{
     // request
     pub end_point: String,
-    pub method: String,
+    pub method: HttpMethod,
     pub headers: Vec<Header>,
     pub params: Vec<UrlParams>,
     pub payload: Option<String>,
@@ -59,4 +58,21 @@ pub enum HttpMethod{
     OPTIONS,
     TRACE,
     PATCH,
+}
+
+impl HttpMethod{
+    // reqwest inner enum for methods is not public, thus the need for this function
+    pub fn value(&self) -> Method{
+        match *self{
+            HttpMethod::GET => Method::GET,
+            HttpMethod::HEAD => Method::HEAD,
+            HttpMethod::POST => Method::POST,
+            HttpMethod::PUT => Method::PUT,
+            HttpMethod::DELETE => Method::DELETE,
+            HttpMethod::CONNECT => Method::CONNECT,
+            HttpMethod::OPTIONS => Method::OPTIONS,
+            HttpMethod::TRACE => Method::TRACE,
+            HttpMethod::PATCH => Method::PATCH,
+        }
+    }
 }

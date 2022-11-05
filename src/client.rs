@@ -1,11 +1,10 @@
 use crate::{types::Config, types::Test};
-use reqwest::{Response, Client as rClient, Method};
+use reqwest::{Response, Client as rClient};
 use url::Url;
 use anyhow::{Result, Context, anyhow};
 use std::time::Duration;
 
 pub struct Client{
-    // TODO: keep the session if its configured that way
     pub config: Config,
     pub reqwest_client: rClient,
     base_url: Url,
@@ -31,7 +30,7 @@ impl Client{
     }
 
     pub async fn exec_test(self: &Self, test: &Test) -> Result<Response>{
-        let method = Method::from_bytes(test.method.as_bytes()).context("Parsing method for a test")?;
+        let method = test.method.value();
         let mut url = self.base_url.clone();
         url.set_path(&test.end_point);
 
