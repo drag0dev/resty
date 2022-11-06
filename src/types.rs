@@ -16,7 +16,6 @@ pub struct Config{
     /// timeout between each test in ms
     pub timeout: Option<u32>,
     /// keep the session/cookie if the respone has it
-    /// TODO: jwt/session/cookie?
     pub keep_session: bool,
 }
 
