@@ -62,7 +62,7 @@ async fn main() {
 
                 // check status code
                 if t.response_code != result.status().as_u16(){
-                    println!("{} ({}): response code not matching {} != {}",
+                    println!("{} ({}) - response code not matching {} != {}",
                     "fail".red().bold(), i+1, t.response_code, result.status().as_u16());
                     failed_check = true;
                 }
@@ -70,23 +70,21 @@ async fn main() {
                 // check headers if required
                 if let Some(test_headers) = &t.response_headers{
                     let mut first: bool = false;
-                    let mut not_matching = 1;
                     let res_headers = result.headers();
-                    for (i, h) in test_headers.iter().enumerate(){
+                    for (header_i, h) in test_headers.iter().enumerate(){
                         if !header_match(h,  res_headers){
                             if !first{
                                 println!("{} ({}) - headers not matching:", "fail".red().bold(), i+1);
                                 failed_check = true;
                                 first = true;
                             }
-                            println!("\t({}) {} not matching ", not_matching, h.header);
+                            println!("\t({}) {} not matching ", header_i+1, h.header);
                             if let Some(value) = res_headers.get(&h.header){
                                 println!("\t\tTest header value: {}", h.value);
                                 println!("\t\tResult header value: {}", value.to_str().unwrap());
                             }else{
                                 println!("\t\t  missing header");
                             }
-                            not_matching += 1;
                         }
                     }
                 }
