@@ -32,16 +32,16 @@ impl Client{
     }
 
     pub async fn exec_test(self: &Self, test: &Test) -> Result<Response>{
-        let method = test.method.value();
+        let method = test.request_method.value();
         let mut url = self.base_url.clone();
-        url.set_path(&test.end_point);
+        url.set_path(&test.request_end_point);
 
         let mut request = self.reqwest_client.request(method, url.as_str());
-        for h in test.headers.iter(){
+        for h in test.request_headers.iter(){
             request = request.header(&h.header, &h.value);
         }
-        if test.payload.is_some(){
-            let payload = test.payload.clone().unwrap();
+        if test.request_body.is_some(){
+            let payload = test.request_body.clone().unwrap();
             request = request.body(payload);
         }
         let res = request.send().await?;

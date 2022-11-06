@@ -110,7 +110,7 @@ async fn main() {
                     failed += 1;
                 }else{
                     success += 1;
-                    println!("{} ({}) - /{}", "success".green().bold(), i+1, t.end_point);
+                    println!("{} ({}) - /{}", "success".green().bold(), i+1, t.request_end_point);
                 }
             }
 

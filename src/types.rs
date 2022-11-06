@@ -22,11 +22,11 @@ pub struct Config{
 #[derive(Deserialize, Debug)]
 pub struct Test{
     // request
-    pub end_point: String,
-    pub method: HttpMethod,
-    pub headers: Vec<Header>,
-    pub params: Vec<UrlParams>,
-    pub payload: Option<String>,
+    pub request_end_point: String,
+    pub request_method: HttpMethod,
+    pub request_headers: Vec<Header>,
+    pub request_params: Vec<UrlParams>,
+    pub request_body: Option<String>,
 
     // response
     pub response_code: u16,
