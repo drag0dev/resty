@@ -12,9 +12,11 @@ pub struct Client{
 
 impl Client{
     pub fn new(config: &Config) -> Result<Self>{
-        let client = reqwest::Client::builder()
-            .connect_timeout(Duration::from_secs(5))
-            .cookie_store(true);
+        let mut client = reqwest::Client::builder()
+            .connect_timeout(Duration::from_secs(5));
+        if config.keep_session{
+            client = client.cookie_store(true);
+        }
 
         let client = client.build()?;
         let mut base_url = Url::parse(&config.base_url).context("Parsing base URL")?;
