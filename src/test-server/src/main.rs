@@ -30,6 +30,7 @@ async fn main() {
             .wrap(Logger::new("[%t-%D]%a %s UA:%{User-Agent}i CT:%{Content-Type}i"))
             .service(tests::get_basic_test)
             .service(tests::json_mirror)
+            .service(tests::mirror_headers)
     }).bind(("127.0.0.1", port));
 
     if server.is_err(){
