@@ -1,5 +1,7 @@
-use actix_web::{Responder, get, post, web, HttpResponse, HttpRequest};
+use actix_web::{Responder, get, post, web, HttpResponse, HttpRequest, Error};
 use crate::types::Reply;
+use actix_web_actors::ws;
+use crate::ws::WsMirror;
 
 // for each test in test.json for the framework a separate handler is written
 #[get("/get_basic_test")]
@@ -21,4 +23,10 @@ async fn mirror_headers(req: HttpRequest) -> impl Responder{
         response.insert_header((header, header_map.get(header).unwrap()));
     }
     response
+}
+
+#[get("/ws_mirror")]
+async fn ws_mirror(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error>{
+    let resp = ws::start(WsMirror{}, &req, stream);
+    resp
 }

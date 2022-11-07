@@ -8,6 +8,7 @@ use env_logger::Env;
 
 mod types;
 mod tests;
+mod ws;
 
 #[actix_web::main]
 async fn main() {
@@ -31,6 +32,7 @@ async fn main() {
             .service(tests::get_basic_test)
             .service(tests::json_mirror)
             .service(tests::mirror_headers)
+            .service(tests::ws_mirror)
     }).bind(("127.0.0.1", port));
 
     if server.is_err(){
