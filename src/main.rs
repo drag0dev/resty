@@ -6,6 +6,7 @@ mod types;
 mod client;
 mod helpers;
 mod clientws;
+mod wsconfig;
 use types::*;
 use client::Client;
 use helpers::*;
