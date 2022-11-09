@@ -5,6 +5,7 @@ use std::time::Duration;
 mod types;
 mod client;
 mod helpers;
+mod clientws;
 use types::*;
 use client::Client;
 use helpers::*;
