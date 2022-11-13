@@ -11,6 +11,11 @@ use types::*;
 use client::Client;
 use helpers::*;
 
+enum TestType{
+    HTTP,
+    WS,
+}
+
 #[tokio::main]
 async fn main() {
     // load file names
@@ -19,6 +24,15 @@ async fn main() {
         println!("{}: missing file name",  "error".red().bold());
         exit(1);
     }
+
+    // determine if its http or ws tests
+    let test_type = if args[1].starts_with("ws"){
+        TestType::WS
+    }else if args[1].starts_with("http"){ // covers both http and https
+        TestType::HTTP
+    }else {
+        panic!("Missing or wrong uri in the test file name \"{}\"!", args[1]);
+    };
 
     for test_config in args.iter().skip(1){
         println!("Running {}", test_config);
