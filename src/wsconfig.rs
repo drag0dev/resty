@@ -27,11 +27,23 @@ pub struct Test{
     pub send_data: Option<String>,
 
     // resp
-    pub response_type: MessageType,
+    pub response_type: Option<MessageType>,
     pub response_data: Option<String>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, PartialEq)]
 pub enum MessageType{
-    Text, Binary, Ping, Pong, Close
+    Text, Binary, Ping, Pong, Close,
+}
+
+impl std::fmt::Display for MessageType{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self{
+            MessageType::Text => write!(f, "Text"),
+            MessageType::Binary => write!(f, "Binary"),
+            MessageType::Ping => write!(f, "Ping"),
+            MessageType::Pong => write!(f, "Pong"),
+            MessageType::Close => write!(f, "Close"),
+        }
+    }
 }
