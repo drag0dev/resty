@@ -1,6 +1,8 @@
 use crate::types::Header;
 use reqwest::header::HeaderMap;
 use colored::Colorize;
+use crate::wsconfig::MessageType;
+use tokio_tungstenite::tungstenite::Message;
 
 pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     if let Some(res_header) = result_headers.get(&header.header){
@@ -50,4 +52,13 @@ pub fn misamatch_slice<'a>(s1: &String, s2: &'a String) -> usize{
         start += 1;
     }
     start
+}
+
+/// get type of the return message
+pub fn message_type(msg: &Message) -> MessageType{
+    if msg.is_text() { return MessageType::Text;}
+    if msg.is_ping() { return MessageType::Ping;}
+    if msg.is_pong() { return MessageType::Pong;}
+    if msg.is_binary() { return MessageType::Binary;}
+    MessageType::Close
 }
