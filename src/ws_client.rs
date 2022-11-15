@@ -12,7 +12,7 @@ use anyhow::{
     anyhow,
 };
 
-use crate::wsconfig::Config;
+use crate::ws_config::Config;
 use url::Url;
 
 pub struct ClientWS {

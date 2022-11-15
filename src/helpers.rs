@@ -1,7 +1,7 @@
-use crate::types::Header;
+use crate::http_config::Header;
 use reqwest::header::HeaderMap;
 use colored::Colorize;
-use crate::wsconfig::MessageType;
+use crate::ws_config::MessageType;
 use tokio_tungstenite::tungstenite::Message;
 
 pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{

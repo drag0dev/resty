@@ -1,11 +1,11 @@
 use std::{env, fs, process::exit};
 use colored::Colorize;
 
-mod types;
-mod client;
+mod http_config;
+mod http_client;
 mod helpers;
-mod clientws;
-mod wsconfig;
+mod ws_config;
+mod ws_client;
 mod execute;
 
 #[tokio::main]
@@ -34,7 +34,7 @@ async fn main() {
 
         // determine type of tests
         if args[1].starts_with("ws"){
-            let master_struct: Result<wsconfig::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
+            let master_struct: Result<ws_config::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
             if master_struct.is_err(){
                 println!("{}: parsing ws test file: {}",  "error".red().bold(), master_struct.err().unwrap());
                 exit(1);
@@ -43,7 +43,7 @@ async fn main() {
             (success, failed) = execute::ws(master_struct).await;
 
         }else if args[1].starts_with("http"){ // covers both http and https
-            let master_struct: Result<types::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
+            let master_struct: Result<http_config::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
             if master_struct.is_err(){
                 println!("{}: parsing http test file: {}",  "error".red().bold(), master_struct.err().unwrap());
                 exit(1);

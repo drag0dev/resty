@@ -1,10 +1,10 @@
 use colored::Colorize;
 use std::time::Duration;
 use crate::{
-    types::MasterStruct,
-    client::Client,
+    http_config::MasterStruct,
+    http_client::Client,
     helpers::*,
-    wsconfig,
+    ws_config,
 };
 
 
@@ -92,7 +92,7 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
     (success, failed)
 }
 
-pub async fn ws(master_struct: wsconfig::MasterStruct) -> (u32, u32){
+pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
     let mut success = 0;
     let mut failed = 0;
 

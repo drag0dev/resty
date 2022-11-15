@@ -1,4 +1,4 @@
-use crate::{types::Config, types::Test};
+use crate::{http_config::Config, http_config::Test};
 use reqwest::{Response, Client as rClient};
 use url::Url;
 use anyhow::{Result, Context, anyhow};
