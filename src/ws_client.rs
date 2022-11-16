@@ -1,5 +1,11 @@
 use futures_util::{SinkExt, StreamExt};
-use tokio::net::TcpStream;
+use tokio::{
+    net::TcpStream,
+    time::{
+        timeout,
+        Duration
+    },
+};
 use tokio_tungstenite::{
     connect_async,
     MaybeTlsStream,
@@ -38,16 +44,22 @@ impl ClientWS{
     pub async fn text(&mut self, msg: String) -> aResult<Option<Result<Message>>>{
         let msg: Message = Message::Text(msg);
         self.client.send(msg).await?;
-        let message_res = self.client.next().await;
-        Ok(message_res)
+        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        if res.is_err(){
+            return Err(anyhow!("no response after 5 seconds"));
+        }
+        Ok(res.unwrap())
     }
 
     /// send a binary message
     pub async fn binary(&mut self, msg: Vec<u8>) -> aResult<Option<Result<Message>>>{
         let msg: Message = Message::Binary(msg);
         self.client.send(msg).await?;
-        let message_res = self.client.next().await;
-        Ok(message_res)
+        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        if res.is_err(){
+            return Err(anyhow!("no response after 5 seconds"));
+        }
+        Ok(res.unwrap())
     }
 
     /// send a ping message
@@ -58,8 +70,11 @@ impl ClientWS{
         }
         let msg: Message = Message::Ping(msg);
         self.client.send(msg).await?;
-        let message_res = self.client.next().await;
-        Ok(message_res)
+        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        if res.is_err(){
+            return Err(anyhow!("no response after 5 seconds"));
+        }
+        Ok(res.unwrap())
     }
 
     /// send a pong message with binary payload
@@ -70,8 +85,11 @@ impl ClientWS{
         }
         let msg: Message = Message::Pong(msg);
         self.client.send(msg).await?;
-        let message_res = self.client.next().await;
-        Ok(message_res)
+        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        if res.is_err(){
+            return Err(anyhow!("no response after 5 seconds"));
+        }
+        Ok(res.unwrap())
     }
 
     // TODO: raw frame and close frame

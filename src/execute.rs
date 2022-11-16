@@ -28,7 +28,7 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
     for (i, t) in master_struct.tests.iter().enumerate(){
         let result = master_client.exec_test(t).await;
         if result.is_err(){
-            println!("{}: executing a test {}", "error".red().bold(), i+1);
+            println!("{} ({}): executing a test: {}", "error".red().bold(), i+1, result.err().unwrap());
             failed += 1;
         }else{
             let result = result.unwrap();
@@ -140,7 +140,7 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
         // check result of the test
         let mut fail_check = false;
         if result.is_err(){
-            println!("{}: executing a test {}", "error".red().bold(), i+1);
+            println!("{} ({}): executing a test: {}", "error".red().bold(), i+1, result.err().unwrap());
             fail_check = true;
         }else{
             let result = result.unwrap();
