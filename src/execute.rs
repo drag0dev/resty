@@ -111,13 +111,6 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
     };
 
     for (i, t) in master_struct.tests.iter().enumerate(){
-        if (t.response_type.is_none() && t.response_data.is_some()) ||
-           (t.response_type.is_some() && t.response_data.is_none()){
-            println!("{} ({}): response_type and response_data do not align, skipping test", "error".bold().red(), i+1);
-            failed += 1;
-            continue;
-        }
-
         // execute test
         let result =
             if t.send_type == MessageType::Text{
@@ -147,57 +140,47 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
         // check result of the test
         let mut fail_check = false;
         if result.is_err(){
-            println!("{}: executing a test{}", "error".red().bold(), i+1);
+            println!("{}: executing a test {}", "error".red().bold(), i+1);
             fail_check = true;
         }else{
             let result = result.unwrap();
 
-            // if we get a body and expect a body
-            if t.response_type.is_some() && result.is_some(){
+            // if no message was returned
+            if result.is_none(){
+                if !(t.response_type.is_none() && t.response_data.is_none()){
+                    println!("\t{} - there was no response", "fail");
+                }
+            }
+            else{
                 let result = result.unwrap();
                 if result.is_err(){
-                    println!("\t{} - reading received body", "error".red().bold());
+                    println!("\t{} - reading received body: {}",
+                        "error".red().bold(),
+                        result.as_ref().err().unwrap());
                     fail_check = true;
-                }else{
-                    let result = result.unwrap();
+                }
+                let result = result.unwrap();
 
-                    // check type of message
+                // compare types if required
+                if t.response_type.is_some(){
                     let result_type = message_type(&result);
                     let test_type = t.response_type.as_ref().unwrap();
                     if test_type != &result_type{
                         println!("\t{}: message types not matching {} != {}", "fail".red().bold(), test_type, result_type);
                         fail_check = true;
                     }
+                }
 
-                    // check bodies
+                // compare bodies if required
+                if t.response_data.is_some(){
                     let result_body = result.into_data().iter().map(|b| *b as char).collect::<String>();
                     let expected_body = t.response_data.as_ref().unwrap();
                     if body_match(expected_body, &result_body, i){
                         fail_check = true;
                     }
                 }
-
-            // if we expect a body but dont recieve any
-            }else if t.response_type.is_some() && result.is_none(){
-                println!("{} ({}) - result missing body",
-                    "error".bold().red(), i+1
-                );
-                fail_check = true;
-            // if we don't expect a body but recieve one
-            }else if t.response_type.is_none() && result.is_some(){
-                println!("{} ({}) - result has a body",
-                    "error".bold().red(), i+1
-                );
-                let result = result.as_ref().unwrap();
-                if result.is_err(){
-                    println!("\t{} - reading received body", "error".red().bold());
-                }else{
-                    println!("\t{}", result.as_ref().unwrap());
-                }
-                fail_check = true;
             }
         }
-
         if fail_check{
             failed += 1;
         }else{
