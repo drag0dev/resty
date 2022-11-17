@@ -18,8 +18,8 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
 
     let mut success = 0;
     let mut failed = 0;
-    let timeout = if master_struct.config.timeout.is_some(){
-        master_struct.config.timeout.unwrap()
+    let timeout = if master_struct.config.pause.is_some(){
+        master_struct.config.pause.unwrap()
     }else{
         0
     };

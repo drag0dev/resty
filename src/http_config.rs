@@ -13,8 +13,10 @@ pub struct Config{
     pub base_url: String,
     /// port to which request are sent
     pub port: Option<u16>,
-    /// timeout between each test in ms
-    pub timeout: Option<u32>,
+    /// pause between each test in ms
+    pub pause: Option<u32>,
+    /// request timeout
+    pub timeout: Option<u64>,
     /// keep the session/cookie if the respone has it
     pub keep_session: bool,
 }

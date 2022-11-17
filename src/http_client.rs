@@ -13,7 +13,8 @@ pub struct Client{
 impl Client{
     pub fn new(config: &Config) -> Result<Self>{
         let mut client = reqwest::Client::builder()
-            .connect_timeout(Duration::from_secs(5));
+            .connect_timeout(Duration::from_secs(5))
+            .timeout(Duration::from_millis(config.timeout.unwrap_or(5000))); // default to 5s
         if config.keep_session{
             client = client.cookie_store(true);
         }
