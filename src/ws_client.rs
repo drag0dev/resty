@@ -23,6 +23,7 @@ use url::Url;
 
 pub struct ClientWS {
     pub client: WebSocketStream<MaybeTlsStream<TcpStream>>,
+    pub timeout: Duration,
 }
 
 impl ClientWS{
@@ -36,17 +37,20 @@ impl ClientWS{
                 return Err(anyhow!("error setting port"));
             }
         }
+
+        let timeout = Duration::from_millis(config.timeout.unwrap_or(5000)); // default to 5s
+
         let (socket, _) = connect_async("ws://localhost:8080/ws_mirror")
             .await.context("")?;
-        Ok( ClientWS { client: socket })
+        Ok( ClientWS { client: socket, timeout})
     }
 
     pub async fn text(&mut self, msg: String) -> aResult<Option<Result<Message>>>{
         let msg: Message = Message::Text(msg);
         self.client.send(msg).await?;
-        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        let res = timeout(self.timeout, self.client.next()).await;
         if res.is_err(){
-            return Err(anyhow!("no response after 5 seconds"));
+            return Err(anyhow!("timed out waiting for response"));
         }
         Ok(res.unwrap())
     }
@@ -55,9 +59,9 @@ impl ClientWS{
     pub async fn binary(&mut self, msg: Vec<u8>) -> aResult<Option<Result<Message>>>{
         let msg: Message = Message::Binary(msg);
         self.client.send(msg).await?;
-        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        let res = timeout(self.timeout, self.client.next()).await;
         if res.is_err(){
-            return Err(anyhow!("no response after 5 seconds"));
+            return Err(anyhow!("timed out waiting for response"));
         }
         Ok(res.unwrap())
     }
@@ -70,9 +74,9 @@ impl ClientWS{
         }
         let msg: Message = Message::Ping(msg);
         self.client.send(msg).await?;
-        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        let res = timeout(self.timeout, self.client.next()).await;
         if res.is_err(){
-            return Err(anyhow!("no response after 5 seconds"));
+            return Err(anyhow!("timed out waiting for response"));
         }
         Ok(res.unwrap())
     }
@@ -85,9 +89,9 @@ impl ClientWS{
         }
         let msg: Message = Message::Pong(msg);
         self.client.send(msg).await?;
-        let res = timeout(Duration::from_secs(5), self.client.next()).await;
+        let res = timeout(self.timeout, self.client.next()).await;
         if res.is_err(){
-            return Err(anyhow!("no response after 5 seconds"));
+            return Err(anyhow!("timed out waiting for response"));
         }
         Ok(res.unwrap())
     }

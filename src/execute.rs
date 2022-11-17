@@ -104,8 +104,8 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
     let mut master_client = master_client.unwrap();
     let mut success = 0;
     let mut failed = 0;
-    let timeout = if master_struct.config.timeout.is_some(){
-        master_struct.config.timeout.unwrap()
+    let timeout = if master_struct.config.pause.is_some(){
+        master_struct.config.pause.unwrap()
     }else{
         0
     };
