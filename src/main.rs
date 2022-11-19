@@ -1,4 +1,9 @@
-use std::{env, fs, process::exit};
+use std::{
+    env,
+    fs,
+    process::exit,
+    path::Path,
+};
 use colored::Colorize;
 
 mod http_config;
@@ -31,9 +36,10 @@ async fn main() {
 
         let success;
         let failed;
+        let file_name = Path::new(test_config).file_name().unwrap().to_str().unwrap(); // will always be something because a file has already been read
 
         // determine type of tests
-        if args[1].starts_with("ws"){
+        if file_name.starts_with("ws"){
             let master_struct: Result<ws_config::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
             if master_struct.is_err(){
                 println!("{}: parsing ws test file: {}",  "error".red().bold(), master_struct.err().unwrap());
@@ -42,7 +48,7 @@ async fn main() {
             let master_struct = master_struct.unwrap();
             (success, failed) = execute::ws(master_struct).await;
 
-        }else if args[1].starts_with("http"){ // covers both http and https
+        }else if file_name.starts_with("http"){
             let master_struct: Result<http_config::MasterStruct, serde_json::Error> = serde_json::from_str(&file_contents);
             if master_struct.is_err(){
                 println!("{}: parsing http test file: {}",  "error".red().bold(), master_struct.err().unwrap());
