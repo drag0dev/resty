@@ -15,14 +15,18 @@ pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     false
 }
 
+// TODO: pretty tabbed and wrapping output
 pub fn body_match(body_one: &String, body_two: &String, index: usize) -> bool{
     if body_one != body_two{
         let start = misamatch_slice(body_one, body_two);
         println!("{} ({}) - body not matching starting: {}", "fail".red().bold(), index+1, start);
         if body_one.len() > 0{
-            println!("\t{}{}",
+            println!("\tMismatch: {}{}",
                 &body_one[0..start],
                 &body_one[start..].red()
+            );
+            println!("\tGot: {}",
+                body_two
             );
         }
         return true;
