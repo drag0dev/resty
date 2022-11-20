@@ -33,6 +33,7 @@ async fn main() {
             .service(tests::json_mirror)
             .service(tests::mirror_headers)
             .service(tests::ws_mirror)
+            .service(tests::params)
     }).bind(("127.0.0.1", port));
 
     if server.is_err(){

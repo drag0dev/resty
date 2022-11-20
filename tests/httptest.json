@@ -66,6 +66,23 @@
                     "value": "value2"
                 }
             ]
+        },
+        {
+            "description": "params test",
+            "request_end_point": "params",
+            "request_method": "GET",
+            "request_params": [
+                {
+                    "key": "key1",
+                    "value": "value1"
+                },
+                {
+                    "key": "key2",
+                    "value": "value2"
+                }
+            ],
+            "response_code": 200,
+            "response_body": "key1=value1&key2=value2"
         }
     ]
 }

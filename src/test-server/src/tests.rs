@@ -30,3 +30,9 @@ async fn ws_mirror(req: HttpRequest, stream: web::Payload) -> Result<HttpRespons
     let resp = ws::start(WsMirror{}, &req, stream);
     resp
 }
+
+#[get("/params")]
+async fn params(req: HttpRequest) -> Result<HttpResponse, Error>{
+    let res = String::from(req.query_string());
+    Ok(HttpResponse::Ok().body(res))
+}

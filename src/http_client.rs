@@ -43,10 +43,19 @@ impl Client{
                 request = request.header(&h.header, &h.value);
             }
         }
+
+        if let Some(params) = &test.request_params{
+            for p in params.iter(){
+                request = request.query(&[(&p.key, &p.value)])
+            }
+        }
+
+
         if test.request_body.is_some(){
             let payload = test.request_body.clone().unwrap();
             request = request.body(payload);
         }
+
         let res = request.send().await?;
         Ok(res)
     }
