@@ -1,0 +1,37 @@
+{
+    "config": {
+        "url": "ws://localhost/ws_mirror",
+        "port": 8080,
+        "pause": 500,
+        "timeout": 5000
+    },
+    "tests": [
+        {
+            "send_type": "Text",
+            "send_data": "Hello",
+            "response_type": "Text",
+            "response_data": "Hello"
+        },
+        {
+            "send_type": "Text",
+            "response_type": "Text"
+        },
+        {
+            "send_type": "Binary",
+            "send_data": "Hello",
+            "response_type": "Binary",
+            "response_data": "Hello"
+        },
+        {
+            "send_type": "Binary",
+            "send_data": "Hello",
+            "response_type": "Binary"
+        },
+        {
+            "send_type": "Ping",
+            "send_data": "Hello",
+            "response_type": "Pong",
+            "response_data": "Hello"
+        }
+    ]
+}
