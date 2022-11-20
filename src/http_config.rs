@@ -26,8 +26,8 @@ pub struct Test{
     // request
     pub request_end_point: String,
     pub request_method: HttpMethod,
-    pub request_headers: Vec<Header>,
-    pub request_params: Vec<UrlParams>,
+    pub request_headers: Option<Vec<Header>>,
+    pub request_params: Option<Vec<UrlParams>>,
     pub request_body: Option<String>,
 
     // response

@@ -38,8 +38,10 @@ impl Client{
         url.set_path(&test.request_end_point);
 
         let mut request = self.reqwest_client.request(method, url.as_str());
-        for h in test.request_headers.iter(){
-            request = request.header(&h.header, &h.value);
+        if let Some(req_hed) = &test.request_headers{
+            for h in req_hed.iter(){
+                request = request.header(&h.header, &h.value);
+            }
         }
         if test.request_body.is_some(){
             let payload = test.request_body.clone().unwrap();
