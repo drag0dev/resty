@@ -113,4 +113,9 @@ impl ClientWS{
         }
         Ok(res.unwrap())
     }
+
+    pub async fn close_socket(&mut self) -> Result<()>{
+        let frame = CloseFrame{code: CloseCode::Normal, reason: Cow::Borrowed("")};
+        self.client.close(Some(frame)).await
+    }
 }

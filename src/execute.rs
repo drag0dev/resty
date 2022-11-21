@@ -209,5 +209,18 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
             std::thread::sleep(Duration::from_millis(timeout as u64));
         }
     }
+
+    let res = master_client.close_socket().await;
+
+    // if the last test was close frame error should be ignored
+    let last_test_close = if let Some(test) = master_struct.tests.last(){
+        test.send_type == MessageType::Close
+    }else{
+        false
+    };
+    if res.is_err() && !last_test_close{
+        println!("{}: closing connection: {}", "error".bold().red(), res.err().unwrap());
+    }
+
     (success, failed)
 }
