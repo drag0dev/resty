@@ -3,4 +3,4 @@ build:
 test-http:
 	cargo run -- tests/httptest.json
 test-ws:
-	cargo run -- tests/httptest.json
+	cargo run -- tests/wstest.json
