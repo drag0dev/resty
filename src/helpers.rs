@@ -60,9 +60,9 @@ pub fn misamatch_slice<'a>(s1: &String, s2: &'a String) -> usize{
 
 /// get type of the return message
 pub fn message_type(msg: &Message) -> MessageType{
-    if msg.is_text() { return MessageType::Text;}
-    if msg.is_ping() { return MessageType::Ping;}
-    if msg.is_pong() { return MessageType::Pong;}
-    if msg.is_binary() { return MessageType::Binary;}
+    if msg.is_text() {return MessageType::Text;}
+    if msg.is_ping() {return MessageType::Ping;}
+    if msg.is_pong() {return MessageType::Pong;}
+    if msg.is_binary() {return MessageType::Binary;}
     MessageType::Close
 }

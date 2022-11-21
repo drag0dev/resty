@@ -11,13 +11,13 @@ pub struct MasterStruct{
 pub struct Config{
     /// url to which requests are sent
     pub base_url: String,
-    /// port to which request are sent
+    /// port to which requests are sent
     pub port: Option<u16>,
     /// pause between each test in ms
     pub pause: Option<u32>,
     /// request timeout
     pub timeout: Option<u64>,
-    /// keep the session/cookie if the respone has it
+    /// keep the session/cookie if the response has it
     pub keep_session: bool,
 }
 
@@ -62,7 +62,7 @@ pub enum HttpMethod{
 }
 
 impl HttpMethod{
-    // reqwest inner enum for methods is not public, thus the need for this function
+    // reqwest inner enum for methods is not public thus the need for this function
     pub fn value(&self) -> Method{
         match *self{
             HttpMethod::GET => Method::GET,

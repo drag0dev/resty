@@ -3,7 +3,7 @@ use tokio::{
     net::TcpStream,
     time::{
         timeout,
-        Duration
+        Duration,
     },
 };
 use tokio_tungstenite::{
@@ -17,6 +17,7 @@ use anyhow::{
     Context,
     anyhow,
 };
+use colored::Colorize;
 
 use crate::ws_config::Config;
 use url::Url;
@@ -40,7 +41,7 @@ impl ClientWS{
 
         let timeout = Duration::from_millis(config.timeout.unwrap_or(5000)); // default to 5s
 
-        let (socket, _) = connect_async("ws://localhost:8080/ws_mirror")
+        let (socket, _) = connect_async(url)
             .await.context("")?;
         Ok( ClientWS { client: socket, timeout})
     }
@@ -70,7 +71,7 @@ impl ClientWS{
     /// will panic if the message is longer than 128 bytes
     pub async fn ping(&mut self, msg: Vec<u8>) -> aResult<Option<Result<Message>>>{
         if msg.len() > 128{
-            panic!("Ping message payload cannot exceed 128bytes!");
+            panic!("{}: ping message payload cannot exceed 128bytes!", "error".bold().red());
         }
         let msg: Message = Message::Ping(msg);
         self.client.send(msg).await?;
@@ -85,7 +86,7 @@ impl ClientWS{
     /// will panic if the message is longer than 128bytes
     pub async fn pong(&mut self, msg: Vec<u8>) -> aResult<Option<Result<Message>>>{
         if msg.len() > 128{
-            panic!("Pong message paylaod cannot exceed 128bytes!");
+            panic!("{}: ping message payload cannot exceed 128bytes!", "error".bold().red());
         }
         let msg: Message = Message::Pong(msg);
         self.client.send(msg).await?;
@@ -96,5 +97,5 @@ impl ClientWS{
         Ok(res.unwrap())
     }
 
-    // TODO: raw frame and close frame
+    // TODO: close frame
 }

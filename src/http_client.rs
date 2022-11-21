@@ -20,9 +20,9 @@ impl Client{
         }
 
         let client = client.build()?;
-        let mut base_url = Url::parse(&config.base_url).context("Parsing base URL")?;
+        let mut base_url = Url::parse(&config.base_url).context("parsing base URL")?;
         if base_url.set_port(config.port).is_err(){
-            return Err(anyhow!("Error parsing port")).context("Setting up base url");
+            return Err(anyhow!("error parsing port")).context("setting up base URL");
         }
         Ok(
             Client{

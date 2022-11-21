@@ -12,8 +12,9 @@ use crate::{
 pub async fn http(master_struct: MasterStruct) -> (u32, u32){
     let master_client = Client::new(&master_struct.config);
     if master_client.is_err(){
-        println!("{} setting up http client: {}", "error".red().bold(), master_client.err().unwrap());
-        std::process::exit(1);
+        println!("{}: setting up http client: {}", "error".red().bold(), master_client.err().unwrap());
+        println!("skipping this file...");
+        return (0, 0);
     }
 
     let mut success = 0;
@@ -57,7 +58,7 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
                             println!("\t\tTest header value: {}", h.value);
                             println!("\t\tResult header value: {}", value.to_str().unwrap());
                         }else{
-                            println!("\t\t  missing header");
+                            println!("\t\tmissing header");
                         }
                     }
                 }

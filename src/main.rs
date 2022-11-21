@@ -60,7 +60,7 @@ async fn main() {
         }else {
             panic!("{}: missing or wrong schema in the test file name \"{}\"!",
                 "error".red().bold(), args[1]);
-        };
+        }
 
         println!("\nResults ({}) -> {}: {} {}: {}",
             test_config,
