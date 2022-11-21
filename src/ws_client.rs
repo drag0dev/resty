@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use futures_util::{SinkExt, StreamExt};
 use tokio::{
     net::TcpStream,
@@ -10,7 +11,12 @@ use tokio_tungstenite::{
     connect_async,
     MaybeTlsStream,
     WebSocketStream,
-    tungstenite::{Result, Message},
+    tungstenite::{
+        Result,
+        Message,
+        protocol::frame::CloseFrame,
+        protocol::frame::coding::CloseCode,
+    },
 };
 use anyhow::{
     Result as aResult,
@@ -97,5 +103,14 @@ impl ClientWS{
         Ok(res.unwrap())
     }
 
-    // TODO: close frame
+    pub async fn close(&mut self, msg: &str, code: CloseCode) -> aResult<Option<Result<Message>>>{
+        let msg = Cow::Borrowed(msg);
+        let frame = CloseFrame{code, reason: msg};
+        self.client.close(Some(frame)).await?;
+        let res = timeout(self.timeout, self.client.next()).await;
+        if res.is_err(){
+            return Err(anyhow!("timed out waiting for response"));
+        }
+        Ok(res.unwrap())
+    }
 }

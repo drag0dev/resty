@@ -32,6 +32,14 @@
             "send_data": "Hello",
             "response_type": "Pong",
             "response_data": "Hello"
+        },
+        {
+            "send_type": "Close",
+            "send_data": "test",
+            "close_message": "test",
+            "close_code": "Normal",
+            "response_type": "Close",
+            "response_data": "test"
         }
     ]
 }

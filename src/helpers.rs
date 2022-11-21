@@ -2,7 +2,10 @@ use crate::http_config::Header;
 use reqwest::header::HeaderMap;
 use colored::Colorize;
 use crate::ws_config::MessageType;
-use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::{
+    Message,
+    protocol::frame::coding::CloseCode,
+};
 
 pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     if let Some(res_header) = result_headers.get(&header.header){
@@ -65,4 +68,24 @@ pub fn message_type(msg: &Message) -> MessageType{
     if msg.is_pong() {return MessageType::Pong;}
     if msg.is_binary() {return MessageType::Binary;}
     MessageType::Close
+}
+
+/// CloseCode from String
+pub fn close_code_from_str(code: &String) -> Option<CloseCode>{
+    match &code.to_uppercase()[..]{
+        "NORMAL" => {Some(CloseCode::Normal)},
+        "AWAY" => {Some(CloseCode::Away)},
+        "PROTOCOL" => {Some(CloseCode::Protocol)},
+        "UNSUPPORTED" => {Some(CloseCode::Unsupported)},
+        "STATUS" => {Some(CloseCode::Status)},
+        "ABNORMAL" => {Some(CloseCode::Abnormal)},
+        "INVALID" => {Some(CloseCode::Invalid)},
+        "POLICY" => {Some(CloseCode::Policy)},
+        "SIZE" => {Some(CloseCode::Size)},
+        "ERROR" => {Some(CloseCode::Error)},
+        "EXTENSION" => {Some(CloseCode::Extension)},
+        "RESTART" => {Some(CloseCode::Restart)},
+        "AGAIN" => {Some(CloseCode::Again)},
+        _ => None,
+    }
 }

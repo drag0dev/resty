@@ -27,6 +27,8 @@ pub struct Test{
     pub send_type: MessageType,
     /// parsed to a corresponding type based on message type
     pub send_data: Option<String>,
+    // only meaningful if its close frame
+    pub close_code: Option<String>,
 
     // resp
     pub response_type: Option<MessageType>,

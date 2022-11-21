@@ -8,6 +8,7 @@ use crate::{
     ws_client,
     ws_config,
 };
+use tokio_tungstenite::tungstenite::protocol::frame::coding::CloseCode;
 
 pub async fn http(master_struct: MasterStruct) -> (u32, u32){
     let master_client = Client::new(&master_struct.config);
@@ -121,8 +122,22 @@ pub async fn ws(master_struct: ws_config::MasterStruct) -> (u32, u32){
                     String::from("")
                 };
                 master_client.text(payload).await
+
             }else if t.send_type == MessageType::Close{
-                todo!();
+                let code = if t.close_code.is_some(){
+                    close_code_from_str(t.close_code.as_ref().unwrap())
+                }else {
+                    Some(CloseCode::Normal)
+                };
+
+                if code.is_none(){
+                    Err(anyhow::anyhow!("invalid close code"))
+                }else{
+                    master_client.close
+                        (t.send_data.as_ref().unwrap_or(&String::from("")), code.unwrap())
+                    .await
+                }
+
             }else {
                 // these type of messages accept Vec<u8> and not a String
                 let payload = if t.send_data.is_some(){
