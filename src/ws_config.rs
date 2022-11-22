@@ -1,7 +1,5 @@
 use serde_derive::Deserialize;
 
-// TODO: Close specific test
-
 #[derive(Deserialize, Debug)]
 pub struct MasterStruct{
     pub config: Config,
