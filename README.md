@@ -1,11 +1,11 @@
-# <p align="center">resty</p>
-<p align="center">A small framework for testing HTTP/WS web APIs I made for myself. It gets bothersome retesting endpoints every time you change something so you write a bunch of dumb tests to do it for you. </p>
+# <p align="center">**resty**</p>
+<p align="center">resty if a framework for testing HTTP/WS web APIs I made for myself. It gets bothersome retesting endpoints every time you change something so you write a bunch of dumb tests to do it for you.</p>
 
 - [HTTP tests example](tests/httptest.json)
 - [WS tests example](tests/wstest.json)
 #
 
-## building/installing
+## Building
 ```
 cargo install --path ./
 ```
@@ -15,7 +15,7 @@ cargo build --release
 ```
 and put the binary wherever you wish
 
-## usage
+## Usage
 ```
 resty [http*.json or ws*.json ...]
 ```
@@ -23,15 +23,14 @@ as many test files as you want
 test files starting with http are expected to have HTTP tests  
 test files starting with ws are expected to have WS tests
 
-## tests
+## Tests
 format and fields, what they mean and their values
-
 ### HTTP
 - **config**
     - **base_url** - URL to which requests are sent (**String**)
     - **port** - port to which requests are sent (**u16**) - optional
     - **pause** - wait time between tests in ms (**u32**) - optional
-    - **timeout** - how long to wait for a response in ms (**u32**) - optional
+    - **timeout** - how long to wait for a response in ms (**u32**) - optional (default 5s)
     - **keep-session** - do you want to keep cookies/session between tests (**bool**)
 - **tests** []
     - **request_end_point** - endpoint for this test (**String**)
@@ -48,5 +47,16 @@ format and fields, what they mean and their values
     - **response_headers** - expected headers on response - optional []
         - **header** - header name (**String**)
         - **value** - header value (**String**)
-    
+
 ### WS
+- **config**
+    - **url** - URL to which frames are sent (**String**)
+    - **port** - port to which frames are sent (**u16**) - optional
+    - **pause** - wait time between tests in ms (**u32**) - optional
+    - **timeout** - how long to wait for a response in ms (**u32**) - optional (default 5s)
+- **tests** []
+    - **send_type** - type of the message being sent (**String**) {Text, Binary, Ping, Pong, Close}
+    - **send_data** - body of the message (**String**) - optional
+    - **close_code** - close code for Close send_type (**String**) - optional, only meaningful if send_type is Close  
+    - **response_type** - type of the response message (**String**) - optional {same as send_type}
+    - **response_data** - body of the response (**String**) - optional
