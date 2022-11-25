@@ -19,6 +19,8 @@ pub struct Config{
     pub timeout: Option<u64>,
     /// keep the session/cookie if the response has it
     pub keep_session: bool,
+    /// are extra headers received ignored
+    pub suppress_extra_headers: Option<bool>,
 }
 
 #[derive(Deserialize, Debug)]

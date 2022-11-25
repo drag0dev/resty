@@ -26,6 +26,12 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
         0
     };
 
+    let suppress = if master_struct.config.suppress_extra_headers.is_none(){
+        true
+    }else{
+        master_struct.config.suppress_extra_headers.unwrap()
+    };
+
     let master_client = master_client.unwrap();
     for (i, t) in master_struct.tests.iter().enumerate(){
         let result = master_client.exec_test(t).await;
@@ -44,9 +50,9 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
             }
 
             // check headers if required
+            let res_headers = result.headers();
             if let Some(test_headers) = &t.response_headers{
                 let mut first: bool = false;
-                let res_headers = result.headers();
                 for (header_i, h) in test_headers.iter().enumerate(){
                     if !header_match(h,  res_headers){
                         if !first{
@@ -61,6 +67,33 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
                         }else{
                             println!("\t\tmissing header");
                         }
+                    }
+                }
+            }
+
+            if !suppress{
+                let mut found;
+                let mut first = false;
+                let mut i = 1;
+                let mut test_headers = &Vec::new();
+                if t.response_headers.is_some(){
+                    test_headers = t.response_headers.as_ref().unwrap();
+                }
+                for res_h in res_headers.iter(){
+                    found = false;
+                    for test_h in test_headers{
+                        if res_h.0.to_string() == test_h.header{
+                            found = true;
+                            break;
+                        }
+                    }
+                    if !found{
+                        if !first{
+                            first = true;
+                            println!("\t{}: extra headers received", "warning".bold().yellow());
+                        }
+                        println!("\t({}) {}:{}", i, res_h.0.to_string(), res_h.1.to_str().unwrap());
+                        i += 1;
                     }
                 }
             }
@@ -84,7 +117,7 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
                 failed += 1;
             }else{
                 success += 1;
-                println!("{} ({}) - /{}", "success".green().bold(), i+1, t.request_endpoint);
+                println!("{} ({}) - /{}\n", "success".green().bold(), i+1, t.request_endpoint);
             }
         }
 

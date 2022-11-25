@@ -2,21 +2,22 @@
     "config": {
         "base_url": "http://localhost",
         "port": 8080,
-        "pause": 500,
+        "pause": 250,
         "timeout": 5000,
-        "keep_session": false
+        "keep_session": false,
+        "suppress_extra_headers": false
     },
     "tests": [
         {
             "description": "most basic test",
-            "request_end_point": "get_basic_test",
+            "request_endpoint": "get_basic_test",
             "request_method": "GET",
             "response_code": 200,
             "response_body": "Hello world!"
         },
         {
             "description": "json mirror",
-            "request_end_point": "json_mirror",
+            "request_endpoint": "json_mirror",
             "request_method": "POST",
             "request_headers": [{"header": "content-type", "value": "application/json"}],
             "request_body": "{\"message\": \"test\"}",
@@ -25,7 +26,7 @@
         },
         {
             "description": "json mirror with headers",
-            "request_end_point": "json_mirror",
+            "request_endpoint": "json_mirror",
             "request_method": "POST",
             "request_headers": [{"header": "content-type", "value": "application/json"}],
             "request_body": "{\"message\": \"test\"}",
@@ -35,13 +36,13 @@
         },
         {
             "description": "json mirror wrong method",
-            "request_end_point": "json_mirror",
+            "request_endpoint": "json_mirror",
             "request_method": "GET",
             "response_code": 404
         },
         {
             "description": "mirror headers",
-            "request_end_point": "mirror_headers",
+            "request_endpoint": "mirror_headers",
             "request_method": "GET",
             "request_headers": [
                 {
@@ -69,7 +70,7 @@
         },
         {
             "description": "params test",
-            "request_end_point": "params",
+            "request_endpoint": "params",
             "request_method": "GET",
             "request_params": [
                 {

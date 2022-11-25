@@ -32,6 +32,7 @@ format and fields, what they mean and their values
     - **pause** - wait time between tests in ms (**u32**) - optional
     - **timeout** - how long to wait for a response in ms (**u32**) - optional (default 5s)
     - **keep-session** - do you want to keep cookies/session between tests (**bool**)
+    - **suppress_extra_headers** - if extra headers are not suppressed they will be printed but will not fail test (**bool**) - optional (default true)
 - **tests** []
     - **request_end_point** - endpoint for this test (**String**)
     - **request_method** - request HTTP method (**String**)
