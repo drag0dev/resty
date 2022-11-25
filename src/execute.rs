@@ -84,7 +84,7 @@ pub async fn http(master_struct: MasterStruct) -> (u32, u32){
                 failed += 1;
             }else{
                 success += 1;
-                println!("{} ({}) - /{}", "success".green().bold(), i+1, t.request_end_point);
+                println!("{} ({}) - /{}", "success".green().bold(), i+1, t.request_endpoint);
             }
         }
 

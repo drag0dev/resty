@@ -24,7 +24,7 @@ pub struct Config{
 #[derive(Deserialize, Debug)]
 pub struct Test{
     // request
-    pub request_end_point: String,
+    pub request_endpoint: String,
     pub request_method: HttpMethod,
     pub request_headers: Option<Vec<Header>>,
     pub request_params: Option<Vec<UrlParams>>,

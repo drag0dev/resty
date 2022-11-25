@@ -35,7 +35,7 @@ impl Client{
     pub async fn exec_test(self: &Self, test: &Test) -> Result<Response>{
         let method = test.request_method.value();
         let mut url = self.base_url.clone();
-        url.set_path(&test.request_end_point);
+        url.set_path(&test.request_endpoint);
 
         let mut request = self.reqwest_client.request(method, url.as_str());
         if let Some(req_hed) = &test.request_headers{
