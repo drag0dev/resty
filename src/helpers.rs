@@ -7,6 +7,8 @@ use tokio_tungstenite::tungstenite::{
     protocol::frame::coding::CloseCode,
 };
 
+use textwrap::wrap;
+
 pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     if let Some(res_header) = result_headers.get(&header.header){
         let res_header_value = res_header.to_str();
@@ -18,17 +20,37 @@ pub fn header_match(header: &Header, result_headers: &HeaderMap) -> bool{
     false
 }
 
-// TODO: pretty tabbed and wrapping output
 pub fn body_match(body_one: &String, body_two: &String, index: usize) -> bool{
     if body_one != body_two{
-        let start = misamatch_slice(body_one, body_two);
+        let mut start = misamatch_slice(body_one, body_two);
         println!("{} ({}) - body not matching starting: {}", "fail".red().bold(), index+1, start);
         if body_one.len() > 0{
-            println!("\tMismatch: {}{}",
-                &body_one[0..start],
-                &body_one[start..].red()
-            );
-            println!("\tGot: {}",
+            let expected = wrap(body_one, 75);
+            let mut color = false;
+            println!("\tExpected:");
+            for line in expected{
+                if !color && start < line.len(){
+                    println!("\t\t{}{}",
+                        &line[0..start],
+                        &line[start..].red(),
+                        );
+                    color = true;
+                    continue;
+                }
+                if color{
+                    println!("\t\t{}", line.red());
+                }else{
+                    println!("\t\t{}", line);
+                    start -= line.len();
+                }
+            }
+
+            /*println!("\tExpected: {}{}",
+                &expected[0..start],
+                &expected[start..].red()
+            );*/
+
+            println!("\tGot: \n\t\t{}\n",
                 body_two
             );
         }
