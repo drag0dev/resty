@@ -13,16 +13,98 @@ mod ws_config;
 mod ws_client;
 mod execute;
 
+fn get_files_from_dir(path_str: &str) -> Vec<String>{
+    let mut files = Vec::new();
+    let path = Path::new(path_str);
+    let entries = path.read_dir();
+    if entries.is_err(){
+        println!("{}: reading files in the diretory ({}): {}",
+        "error".bold().red(),
+        path_str,
+        entries.err().unwrap());
+        exit(1);
+    }
+
+    for file in entries.unwrap(){
+        if file.is_ok(){
+            let file = file.unwrap();
+            let file_path = file.path();
+            if file_path.is_file(){
+                let file_full_path = file_path.to_str();
+                if file_full_path.is_none(){
+                    println!("{}: getting file path", "error".bold().red());
+                    exit(1);
+                }
+                let file_name = file_path.file_name().unwrap(); // unwrap because its already been checked that its a file
+                let file_name = file_name.to_str();
+                if file_name.is_none(){
+                    println!("{}: getting file name", "error".bold().red());
+                    exit(1);
+                }
+                let file_name = file_name.unwrap();
+                if file_name.starts_with("http") || file_name.starts_with("ws"){
+                    files.push(file_full_path.unwrap().to_string());
+                }
+            }
+        }
+    }
+    files
+}
+
 #[tokio::main]
 async fn main() {
     // load file names
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        println!("{}: missing file name",  "error".red().bold());
-        exit(1);
+    let files;
+    let iter;
+    let len;
+
+    // if no arguments take current working directory
+    // skip(0) required to align iter type in all branches
+    if args.len() == 1 {
+        let dir = std::env::current_dir();
+        if dir.is_err(){
+            println!("{}: getting current directory: {}", "error".bold().red(), dir.err().unwrap());
+            exit(1);
+        }
+
+        let dir = dir.unwrap();
+        let dir_str = dir.to_str();
+        if dir_str.is_none(){
+            println!("{}: malformed current directory", "error".bold().red());
+            exit(1);
+        }
+
+        files = get_files_from_dir(dir_str.unwrap());
+        iter = files.iter().skip(0);
+        len = files.len();
     }
 
-    for test_config in args.iter().skip(1){
+    // directory or a single file
+    else if args.len() == 2 {
+        let path = Path::new(&args[1]);
+        if path.is_file(){
+            files = vec![args[1].clone()];
+            iter = files.iter().skip(0);
+            len = 1;
+        }else{
+            files = get_files_from_dir(&args[1]);
+            iter = files.iter().skip(0);
+            len = files.len();
+        }
+    }
+
+    // multiple test files
+    else {
+        iter = args.iter().skip(1);
+        len = args.len() - 1;
+    }
+
+    if len == 0 {
+        println!("No test files, exiting...");
+    }
+
+    for test_config in iter{
         println!("Running {}", test_config);
         println!("----------------------------------------");
 
