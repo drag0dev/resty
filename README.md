@@ -16,6 +16,17 @@ cargo build --release
 and put the binary wherever you wish
 
 ## Usage
+if no  arguments is provided tests in the current working directory are going to be executed
+```
+resty
+```
+
+if directory is provided all the tests in that directory are going to be executed
+```
+resty dir
+```
+
+or just pass test files
 ```
 resty [http*.json or ws*.json ...]
 ```
