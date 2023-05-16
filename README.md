@@ -1,5 +1,5 @@
 # <p align="center">**resty**</p>
-<p align="center">resty if a framework for testing HTTP/WS web APIs I made for myself. It gets bothersome retesting endpoints every time you change something so you write a bunch of dumb tests to do it for you.</p>
+<p align="center">resty is a framework for testing HTTP/WS web APIs I made for myself. It gets bothersome retesting endpoints every time you change something so you write a bunch of dumb tests to do it for you.</p>
 
 - [HTTP tests example](tests/httptest.json)
 - [WS tests example](tests/wstest.json)
